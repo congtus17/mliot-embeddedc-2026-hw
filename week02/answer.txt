@@ -1,0 +1,13 @@
+Task 4.2
+BIKE_MODEL (ROM/.rodata): Thuộc vùng .rodata vì được khai báo bằng const.
+total_odometer (RAM/.bss): Thuộc vùng .bss vì là biến toàn cục khởi tạo bằng 0.
+current_speed (RAM/Stack): Thuộc Stack vì là biến cục bộ trong hàm main.
+
+Task 4.3
+Hàm crash_simulation() gọi đệ quy vô hạn nên gây Stack Overflow và chương trình bị crash. 
+Trên ARM Cortex-M, CPU sẽ chuyển đến HardFault_Handler để xử lý lỗi.
+
+Task 5
+Em chọn Cách 1: uint16_t trip_history[20000] = {0};
+Vì mảng toàn số 0 sẽ nằm ở vùng .bss nên không tốn Flash. 
+Còn Cách 2 có dữ liệu khởi tạo khác 0 nên phải lưu trong Flash trước rồi mới đưa vào RAM khi chạy, vì vậy sẽ tốn Flash hơn.
