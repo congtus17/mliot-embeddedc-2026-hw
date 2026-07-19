@@ -1,0 +1,34 @@
+Task 1:
+1.1
+- CMake: Dùng để cấu hình dự án thông qua file CMakeLists.txt và tạo ra các file build cho Ninja.
+- Ninja: Dùng để build dự án. Ninja đọc các file do CMake tạo rồi gọi Compiler để biên dịch chương trình.
+- Compiler (arm-none-eabi-gcc): Biên dịch các file nguồn .c thành các file đối tượng .o dành cho vi điều khiển STM32.
+- STM32_Programmer_CLI: Dùng để nạp file chương trình xuống bộ nhớ Flash của STM32 thông qua ST-Link.
+1.2
+1. Viết chương trình C.
+2. Chạy CMake để đọc file CMakeLists.txt và tạo các file build cho Ninja.
+3. Ninja sử dụng các file do CMake tạo để gọi Compiler biên dịch các file .c thành .o, sau đó Linker liên kết các file .o và tạo ra file .bin.
+4. STM32_Programmer_CLI sử dụng file .bin vừa tạo để nạp chương trình vào bộ nhớ Flash của vi điều khiển STM32.
+5. Sau khi nạp xong, vi điều khiển Reset và bắt đầu chạy chương trình.
+
+Task 2
+2.1
+Sau khi biên dịch, mỗi file .c chỉ tạo ra một file đối tượng .o. Những file này chỉ chứa mã máy của từng phần chương trình nên vẫn chưa thể hoạt động độc lập và cũng chưa thể nạp trực tiếp xuống chip.
+Linker sẽ ghép tất cả các file .o lại với nhau, xử lý các lời gọi hàm giữa các file, sắp xếp các vùng nhớ và tạo ra file thực thi hoàn chỉnh như .elf hoặc .bin. Đây mới là file có thể nạp xuống vi điều khiển.
+2.2
+Incremental Build của Ninja giúp giảm thời gian build vì chỉ biên dịch lại những file đã được chỉnh sửa thay vì build lại toàn bộ dự án.
+Ninja dựa vào thời gian chỉnh sửa của các file nguồn và các file phụ thuộc. Nếu một file .c được sửa thì Ninja chỉ biên dịch lại file đó để tạo file .o mới, sau đó Linker sẽ tạo lại file thực thi từ các file .o hiện có.
+
+Task 3
+3.1
+LMA (Load Memory Address) là địa chỉ lưu dữ liệu ban đầu của vùng .data trong Flash.
+VMA (Virtual Memory Address) là địa chỉ của vùng .data khi chương trình đang chạy trong RAM.
+Vùng .data cần cả hai địa chỉ vì dữ liệu ban đầu phải được lưu trong Flash để không bị mất khi tắt nguồn. Khi chương trình chạy, dữ liệu này sẽ được sao chép sang RAM để CPU có thể đọc và ghi.
+3.2
+Nếu Startup Code không sao chép dữ liệu từ _sidata sang _sdata thì các biến toàn cục có giá trị khởi tạo sẽ không nhận đúng giá trị ban đầu. Khi đó chương trình có thể chạy không đúng như mong muốn.
+
+Task 4
+4.1
+cmake -B build -G Ninja
+4.2
+cmake --build build
